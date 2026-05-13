@@ -1,0 +1,1 @@
+const {PrismaClient}=require('@prisma/client');const p=new PrismaClient();const d=new Date();d.setFullYear(d.getFullYear()+100);p.user.findUnique({where:{email:'daviiidferreira038@gmail.com'}}).then(u=>p.company.update({where:{id:u.companyId},data:{status:'active',paidUntil:d}})).then(r=>console.log('Ativado!',r.paidUntil)).catch(console.error).finally(()=>p.$disconnect())

@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./estoquei.db"
+}
+
+model Company {
+  id           String     @id @default(cuid())
+  name         String
+  plan         String     @default("basic")
+  status       String     @default("trial")
+  trialEndsAt  DateTime   @default(now())
+  paidUntil    DateTime?
+  users        User[]
+  products     Product[]
+  movements    Movement[]
+  createdAt    DateTime   @default(now())
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      String     @default("admin")
+  companyId String
+  company   Company    @relation(fields: [companyId], references: [id])
+  movements Movement[]
+}
+
+model Product {
+  id        String     @id @default(cuid())
+  name      String
+  category  String     @default("")
+  quantity  Int        @default(0)
+  minQty    Int        @default(0)
+  price     Float      @default(0)
+  companyId String
+  company   Company    @relation(fields: [companyId], references: [id])
+  movements Movement[]
+  updatedAt DateTime   @updatedAt
+}
+
+model Movement {
+  id        String   @id @default(cuid())
+  type      String
+  quantity  Int
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+}
